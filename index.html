@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ludo Quest — a modern, fully interactive 4-player Ludo board game built with vanilla HTML, CSS, and JavaScript.">
+  <title>Ludo Quest — Modern 4-Player Board Game</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- ── Sidebar / Controls ──────────────────────────────── -->
+    <aside class="sidebar">
+      <div class="players-list">
+        <div class="player-card" id="card-RED" data-color="RED">
+          <div class="player-avatar"></div>
+          <div class="player-info">
+            <span class="player-name">Player Red</span>
+            <span class="player-status" id="status-RED">Waiting</span>
+          </div>
+        </div>
+        <div class="player-card" id="card-GREEN" data-color="GREEN">
+          <div class="player-avatar"></div>
+          <div class="player-info">
+            <span class="player-name">Player Green</span>
+            <span class="player-status" id="status-GREEN">Waiting</span>
+          </div>
+        </div>
+        <div class="player-card" id="card-YELLOW" data-color="YELLOW">
+          <div class="player-avatar"></div>
+          <div class="player-info">
+            <span class="player-name">Player Yellow</span>
+            <span class="player-status" id="status-YELLOW">Waiting</span>
+          </div>
+        </div>
+        <div class="player-card" id="card-BLUE" data-color="BLUE">
+          <div class="player-avatar"></div>
+          <div class="player-info">
+            <span class="player-name">Player Blue</span>
+            <span class="player-status" id="status-BLUE">Waiting</span>
+          </div>
+        </div>
+      </div><!-- /players-list -->
+
+      <div class="control-panel">
+        <!-- Dice (clickable) -->
+        <div class="dice-wrapper">
+          <div class="dice" id="game-dice" role="button" aria-label="Roll dice" tabindex="0">
+            <div class="dice-face face-1" style="display:flex;">
+              <span class="dot"></span>
+            </div>
+            <div class="dice-face face-2">
+              <div class="dot-row"><span class="dot"></span><span class="dot"></span></div>
+            </div>
+            <div class="dice-face face-3">
+              <div class="dot-row"><span class="dot"></span></div>
+              <div class="dot-row"><span class="dot"></span></div>
+              <div class="dot-row"><span class="dot"></span></div>
+            </div>
+            <div class="dice-face face-4">
+              <div class="dot-row"><span class="dot"></span><span class="dot"></span></div>
+              <div class="dot-row"><span class="dot"></span><span class="dot"></span></div>
+            </div>
+            <div class="dice-face face-5">
+              <div class="dot-row"><span class="dot"></span><span class="dot"></span></div>
+              <div class="dot-center"><span class="dot"></span></div>
+              <div class="dot-row"><span class="dot"></span><span class="dot"></span></div>
+            </div>
+            <div class="dice-face face-6">
+              <div class="dot-row"><span class="dot"></span><span class="dot"></span></div>
+              <div class="dot-row"><span class="dot"></span><span class="dot"></span></div>
+              <div class="dot-row"><span class="dot"></span><span class="dot"></span></div>
+            </div>
+          </div>
+        </div><!-- /dice-wrapper -->
+        
+        <button id="roll-btn" class="glow-button">🎲 Roll Dice</button>
+        <div id="game-message" class="status-msg">Red goes first — Roll the dice!</div>
+      </div><!-- /control-panel -->
+      
+      <button id="reset-btn" class="secondary-button">↺ Restart Game</button>
+    </aside><!-- /sidebar -->
+
+    <!-- ── Board ─────────────────────────────────────────────── -->
+    <main class="board-container">
+      <div class="ludo-board" id="ludo-board">
+        <!-- Corner Nests -->
+        <div class="nest red-nest" style="grid-area: 1/1/7/7;">
+          <div class="nest-inner">
+            <div class="token-slot red-token-slot" data-color="RED" data-index="0"></div>
+            <div class="token-slot red-token-slot" data-color="RED" data-index="1"></div>
+            <div class="token-slot red-token-slot" data-color="RED" data-index="2"></div>
+            <div class="token-slot red-token-slot" data-color="RED" data-index="3"></div>
+          </div>
+        </div>
+        <div class="nest green-nest" style="grid-area: 1/10/7/16;">
+          <div class="nest-inner">
+            <div class="token-slot green-token-slot" data-color="GREEN" data-index="0"></div>
+            <div class="token-slot green-token-slot" data-color="GREEN" data-index="1"></div>
+            <div class="token-slot green-token-slot" data-color="GREEN" data-index="2"></div>
+            <div class="token-slot green-token-slot" data-color="GREEN" data-index="3"></div>
+          </div>
+        </div>
+        <div class="nest blue-nest" style="grid-area: 10/1/16/7;">
+          <div class="nest-inner">
+            <div class="token-slot blue-token-slot" data-color="BLUE" data-index="0"></div>
+            <div class="token-slot blue-token-slot" data-color="BLUE" data-index="1"></div>
+            <div class="token-slot blue-token-slot" data-color="BLUE" data-index="2"></div>
+            <div class="token-slot blue-token-slot" data-color="BLUE" data-index="3"></div>
+          </div>
+        </div>
+        <div class="nest yellow-nest" style="grid-area: 10/10/16/16;">
+          <div class="nest-inner">
+            <div class="token-slot yellow-token-slot" data-color="YELLOW" data-index="0"></div>
+            <div class="token-slot yellow-token-slot" data-color="YELLOW" data-index="1"></div>
+            <div class="token-slot yellow-token-slot" data-color="YELLOW" data-index="2"></div>
+            <div class="token-slot yellow-token-slot" data-color="YELLOW" data-index="3"></div>
+          </div>
+        </div>
+        
+        <div class="center-home" style="grid-area: 7/7/10/10;">
+          <svg viewBox="0 0 100 100" class="home-svg" aria-hidden="true">
+            <polygon points="0,0 50,50 0,100" fill="var(--red-color)" opacity="0.85"/>
+            <polygon points="0,0 100,0 50,50" fill="var(--green-color)" opacity="0.85"/>
+            <polygon points="100,0 100,100 50,50" fill="var(--yellow-color)" opacity="0.85"/>
+            <polygon points="0,100 100,100 50,50" fill="var(--blue-color)" opacity="0.85"/>
+          </svg>
+          <div class="center-crown" aria-hidden="true">👑</div>
+        </div>
+        
+        <!-- Track + home-run cells injected by app.js -->
+        <div id="board-cells-container" style="display:contents;"></div>
+      </div><!-- /ludo-board -->
+    </main>
+  </div><!-- /app-container -->
+
+  <!-- ── Victory Modal ──────────────────────────────────────── -->
+  <div class="modal-overlay" id="win-modal" role="dialog" aria-modal="true" aria-labelledby="winner-title">
+    <div class="modal-content">
+      <div class="winner-emoji" id="winner-emoji">🏆</div>
+      <h2 class="winner-title" id="winner-title">Victory!</h2>
+      <p id="winner-name-text">Player Red Wins!</p>
+      <ul class="rank-list" id="rank-list"></ul>
+      <button id="modal-restart-btn" class="glow-button">Play Again</button>
+    </div>
+  </div>
+  
+  <script src="audio.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
