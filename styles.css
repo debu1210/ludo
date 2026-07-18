@@ -1,0 +1,498 @@
+/* ==========================================================================
+   1. DESIGN SYSTEM VARIABLES & GLOBAL RESETS
+   ========================================================================== */
+:root {
+  --bg-primary: #0f172a;
+  --bg-sidebar: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  
+  /* Vibrant Ludo Palette */
+  --red-color: #ef4444;
+  --green-color: #22c55e;
+  --yellow-color: #eab308;
+  --blue-color: #3b82f6;
+  
+  /* Glassmorphism / UI Shadows */
+  --card-border: rgba(255, 255, 255, 0.08);
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  --radius-md: 12px;
+  --radius-lg: 20px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+/* ==========================================================================
+   2. APP CONTAINER LAYOUT (SIDEBAR + MAIN COMPONENT)
+   ========================================================================== */
+.app-container {
+  display: flex;
+  flex-direction: row;
+  width: 95vw;
+  max-width: 1300px;
+  height: 85vh;
+  min-height: 650px;
+  max-height: 850px;
+  gap: 2rem;
+}
+
+.sidebar {
+  flex: 0 0 320px;
+  background-color: var(--bg-sidebar);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-lg);
+}
+
+.players-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.player-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player-avatar {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
+}
+
+#card-RED .player-avatar    { color: var(--red-color); background: var(--red-color); }
+#card-GREEN .player-avatar  { color: var(--green-color); background: var(--green-color); }
+#card-YELLOW .player-avatar { color: var(--yellow-color); background: var(--yellow-color); }
+#card-BLUE .player-avatar   { color: var(--blue-color); background: var(--blue-color); }
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.player-status {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.player-card.active-turn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: currentColor;
+  transform: translateX(6px);
+}
+#card-RED.active-turn    { color: var(--red-color); }
+#card-GREEN.active-turn  { color: var(--green-color); }
+#card-YELLOW.active-turn { color: var(--yellow-color); }
+#card-BLUE.active-turn   { color: var(--blue-color); }
+
+.player-card.active-turn .player-status {
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   3. SIDEBAR CORE INTERACTION PANEL (DICE & BUTTONS)
+   ========================================================================== */
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.status-msg {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  min-height: 40px;
+  padding: 0 0.5rem;
+}
+
+.dice-wrapper {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--card-border);
+}
+
+.dice {
+  width: 60px;
+  height: 60px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: inset 0 -4px 8px rgba(0,0,0,0.15), 0 6px 12px rgba(0,0,0,0.25);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.15s ease;
+}
+
+.dice:active {
+  transform: scale(0.92);
+}
+
+.dice-face {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background-color: #1e293b;
+  border-radius: 50%;
+}
+
+.dot-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.dice-face.face-3 .dot-row:nth-child(1) { justify-content: flex-start; }
+.dice-face.face-3 .dot-row:nth-child(2) { justify-content: center; }
+.dice-face.face-3 .dot-row:nth-child(3) { justify-content: flex-end; }
+.dot-center { display: flex; justify-content: center; width: 100%; }
+
+.glow-button, .secondary-button {
+  width: 100%;
+  padding: 0.85rem;
+  border-radius: var(--radius-md);
+  border: none;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.glow-button {
+  background: linear-gradient(135deg, #4f46e5, #3b82f6);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.glow-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45);
+}
+
+.secondary-button {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  border: 1px solid var(--card-border);
+}
+
+.secondary-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* ==========================================================================
+   4. LUDO BOARD GRID ENGINE (STRICT 15x15 LAYOUT)
+   ========================================================================== */
+.board-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-sidebar);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.ludo-board {
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  grid-template-rows: repeat(15, 1fr);
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 650px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+  position: relative;
+}
+
+.nest {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12%;
+}
+
+.red-nest    { background-color: var(--red-color); }
+.green-nest  { background-color: var(--green-color); }
+.yellow-nest { background-color: var(--yellow-color); }
+.blue-nest   { background-color: var(--blue-color); }
+
+.nest-inner {
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12%;
+  padding: 12%;
+  box-shadow: inset 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.token-slot {
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  border: 2px dashed #cbd5e1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.center-home {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #f8fafc;
+}
+
+.home-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.center-crown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ==========================================================================
+   5. CELL TRACK SYSTEMS & INJECTED PATHWAYS
+   ========================================================================== */
+.track-cell {
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.red-start    { background-color: var(--red-color) !important; }
+.green-start  { background-color: var(--green-color) !important; }
+.yellow-start { background-color: var(--yellow-color) !important; }
+.blue-start   { background-color: var(--blue-color) !important; }
+
+.red-home-run    { background-color: var(--red-color); opacity: 0.9; }
+.green-home-run  { background-color: var(--green-color); opacity: 0.9; }
+.yellow-home-run { background-color: var(--yellow-color); opacity: 0.9; }
+.blue-home-run   { background-color: var(--blue-color); opacity: 0.9; }
+
+.home-run-cell {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.track-cell.red-start::after,
+.track-cell.green-start::after,
+.track-cell.yellow-start::after,
+.track-cell.blue-start::after {
+  content: "★";
+  color: #ffffff;
+  font-size: 0.8rem;
+  position: absolute;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   6. TOKEN ELEMENT ARCHITECTURE & ANIMATION STATE HOOKS
+   ========================================================================== */
+.token {
+  width: 70%;
+  height: 70%;
+  max-width: 26px;
+  max-height: 26px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2), inset 0 -3px 6px rgba(0,0,0,0.2);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), left 0.3s, top 0.3s;
+}
+
+.token:hover {
+  transform: scale(1.2) translateY(-2px);
+  z-index: 20;
+}
+
+.token-red    { background: radial-gradient(circle at 30% 30%, #ff8787, var(--red-color)); }
+.token-green  { background: radial-gradient(circle at 30% 30%, #a9e34b, var(--green-color)); }
+.token-yellow { background: radial-gradient(circle at 30% 30%, #ffe066, var(--yellow-color)); }
+.token-blue   { background: radial-gradient(circle at 30% 30%, #74c0fc, var(--blue-color)); }
+
+.moveable-highlight {
+  animation: tokenPulse 1.2s infinite alternate ease-in-out;
+  box-shadow: 0 0 0 4px #ffffff, 0 0 15px currentColor;
+  z-index: 15;
+}
+
+@keyframes tokenPulse {
+  0% { transform: scale(1); filter: brightness(1); }
+  100% { transform: scale(1.2); filter: brightness(1.25); }
+}
+
+.center-home .token {
+  width: 22px;
+  height: 22px;
+  margin: 2px;
+}
+
+/* ==========================================================================
+   7. MODAL OVERLAYS (VICTORY STATES)
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: var(--bg-sidebar);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 450px;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  transform: scale(0.85);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.active .modal-content {
+  transform: scale(1);
+}
+
+.winner-emoji {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.winner-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #fef08a, #eab308);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+#winner-name-text {
+  font-size: 1.1rem;
+  color: var(--text-main);
+  margin-bottom: 1.5rem;
+}
+
+.rank-list {
+  list-style: none;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rank-list li {
+  font-size: 0.95rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.rank-list li:last-child { border: none; }
+
+/* ==========================================================================
+   8. MEDIA QUERIES (RESPONSIVE VIEW RESIZERS)
+   ========================================================================== */
+@media (max-width: 968px) {
+  .app-container {
+    flex-direction: column;
+    height: auto;
+    max-height: none;
+    align-items: center;
+    padding: 1rem 0;
+  }
+  
+  .sidebar {
+    width: 100%;
+    max-width: 650px;
+    flex: none;
+  }
+  
+  .board-container {
+    width: 100%;
+    max-width: 650px;
+  }
+}
